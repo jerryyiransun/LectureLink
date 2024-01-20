@@ -5,6 +5,12 @@
   text-align: center;
 }
 
+.link-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3px; /* Optional: Adds some space between the links */
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

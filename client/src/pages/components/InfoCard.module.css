@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
+
+.cardContainer {
+    color: black; /* Make the text color black */
+    font-family: 'Roboto', sans-serif; /* Use the custom font */
+    font-size: "1.5rem";
+    font-weight: "bold";
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    height: 200px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: thistle;
+}
+
+.profileInfo {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.cardContainer img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-left: 10px;
+}
+
+.profileCourses {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}

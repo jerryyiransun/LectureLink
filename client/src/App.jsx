@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import { LoginPage } from "./pages/LoginPage";
 import { UserConfigPage } from "./pages/UserConfigPage";
@@ -22,16 +22,19 @@ function App() {
   */
   return (
     <>
-    <Routes>
+      <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/user-config" element={<UserConfigPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/chat" element={<ChatPage />} />
       </Routes>
-  
+
       <div>
         <div>Home Page</div>
-        <Link to="/user-config">Go to User Config</Link>
+        <div className="link-container">
+          <Link to="/user-config">Go to User Config</Link>
+          <Link to="/search">Go to Search</Link>
+        </div>
       </div>
     </>
   );
