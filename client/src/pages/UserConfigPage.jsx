@@ -9,6 +9,7 @@ export const UserConfigPage = () => {
     gender: '',
     faculty: '',
     courses: [],
+    profilePic: null,
   });
   const [file, setFile] = useState(null);
 
@@ -20,9 +21,20 @@ export const UserConfigPage = () => {
     }));
   };
 
-  const handleFileDrop = (files, event) => {
-    console.log(files);
-    setFile(file);
+  const handleFileDrop = (dropFile, event) => {
+    const fileReader = new FileReader();
+
+    // this ha
+    fileReader.onload = function () {
+      console.log(fileReader.result);
+      setUserData((prevData) => ({
+        ...prevData,
+        profilePic: fileReader.result,
+      }));
+    };
+
+    console.log(dropFile);
+    fileReader.readAsDataURL(dropFile);
   }
 
   return (
@@ -53,6 +65,7 @@ export const UserConfigPage = () => {
         <h3>Upload Profile Picture</h3>
         <FileUploader
           types={fileTypes}
+        //   name="profilePic"
           handleChange={handleFileDrop}
         />
         <h3>User Details:</h3>
@@ -60,7 +73,7 @@ export const UserConfigPage = () => {
         <p>Gender: {userData.gender}</p>
         <p>Faculty: {userData.faculty}</p>
         <p>Courses: {userData.courses}</p>
-        <p>Profile Picture: {file}</p>
+        <img src={userData.profilePic} alt="Profile" />
       </div>
     </div>
   );
