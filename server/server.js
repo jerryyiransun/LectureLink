@@ -9,50 +9,36 @@ const client = new MongoClient(process.env.MONGO_URL);
 
 const app = express();
 
-const { auth } = require("express-openid-connect");
-
-const config = {
-  authRequired: false,
-  auth0Logout: true,
-  secret: process.env.AUTH0_SECRET,
-  baseURL: process.env.AUTH0_BASE_URL,
-  clientID: process.env.AUTH0_CLIENT_ID,
-  issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
+const corsOptions = {
+  //   origin: "https://leapconcis.com",
+  //   optionsSuccessStatus: 200,
 };
 
-app.use(auth(config));
+app.options("*", cors(corsOptions));
 
-// req.isAuthenticated is provided from the auth router
-app.get("/", (req, res) => {
-  res.send(req.oidc.isAuthenticated() ? "Logged in" : "Logged out");
+app.use(express.json());
+
+app.get("/test", cors(), (req, res) => {
+  res.status(200).json("got test");
 });
 
-// const corsOptions = {
-//   //   origin: "https://leapconcis.com",
-//   //   optionsSuccessStatus: 200,
-// };
+app.get("/testdb", async (req, res) => {
+  const db = client.db("sample_mflix");
+  const collection = db.collection("movies");
+  const movies = await collection.find({}).toArray();
 
-// app.options("*", cors(corsOptions));
+  res.status(200).json(movies);
+});
 
-// app.use(express.json());
+app.listen(8000, async () => {
+  console.log(`Server is running on port 8000.`);
+  client.connect();
+});
 
-// app.get("/test", cors(), (req, res) => {
-//   res.status(200).json("got test");
-// });
+app.get("/courses", cors(), async (req, res) => {
+  const db = client.db("UBC");
+  const collection = db.collection("courses");
+  const courses = await collection.find({}).toArray();
 
-// app.get("/testdb", async (req, res) => {
-//   const db = client.db("sample_mflix");
-//   const collection = db.collection("movies");
-//   const movies = await collection.find({}).toArray();
-
-//   res.status(200).json(movies);
-// });
-
-// app.get("/testcors", cors(corsOptions), (req, res) => {
-//   res.json("This is CORS-enabled for only leapconcis.com");
-// });
-
-// app.listen(3000, async () => {
-//   console.log(`Server is running on port 8000.`);
-//   client.connect();
-// });
+  res.status(200).json(courses);
+});
