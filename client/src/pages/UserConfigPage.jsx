@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
 import { FileUploader } from "react-drag-drop-files";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const fileTypes = ["JPG", "PNG", "GIF"];
 
 export const UserConfigPage = () => {
   const [userData, setUserData] = useState({
     name: '',
-    gender: '',
+    pronouns: '',
     faculty: '',
+    residenceStatus: '',
+    interests: '',
+    blurb: '',
     courses: [],
     profilePic: null,
   });
   const [file, setFile] = useState(null);
+  const list = ["APSC 101", "CPEN 221", "CPSC 210", "CPSC 221", "CPSC 213"];
+
 
   const handleChangeInput = (e) => {
     const { name, value } = e.target;
@@ -24,7 +31,7 @@ export const UserConfigPage = () => {
   const handleFileDrop = (dropFile, event) => {
     const fileReader = new FileReader();
 
-    // this ha
+    // called when file reading is done
     fileReader.onload = function () {
       console.log(fileReader.result);
       setUserData((prevData) => ({
@@ -40,40 +47,67 @@ export const UserConfigPage = () => {
   return (
     <div>
       <h2>User Profile</h2>
-      <form>
-        <label>
-          Name: {" "}
-          <input type="text" name="name" value={userData.name} onChange={handleChangeInput} />
-        </label>
-        <br />
-        <label>
-          Gender: {" "}
-          <input type="text" name="gender" value={userData.gender} onChange={handleChangeInput} />
-        </label>
-        <br />
-        <label>
-          Faculty: {" "}
-          <input type="text" name="faculty" value={userData.faculty} onChange={handleChangeInput} />
-        </label>
-        <br />
-        <label>
-          Courses: {" "}
-          <input type="text" name="courses" value={userData.courses} onChange={handleChangeInput} />
-        </label>
-      </form>
-      <div>
+        <TextField
+            id="outlined-basic"
+            label="Name"
+            variant="outlined"
+            value={userData.name}
+            onChange={handleChangeInput}
+        />
+        <TextField
+            id = "outlined-basic"
+            label = "Pronouns"
+            variant = "outlined"
+            value = {userData.pronouns}
+            onChange = {handleChangeInput}
+        />
+        <TextField
+            id = "outlined-basic"
+            label = "Faculty/Major"
+            variant = "outlined"
+            value = {userData.faculty}
+            onChange = {handleChangeInput}
+        />
+        <TextField
+            id = "outlined-basic"
+            label = "Residence Status"
+            variant = "outlined"
+            value = {userData.residenceStatus}
+            onChange = {handleChangeInput}
+        />
+        <TextField
+            id = "outlined-basic"
+            label = "Interests"
+            variant = "outlined"
+            value = {userData.interests}
+            onChange = {handleChangeInput}
+        />
+        <TextField
+            id = "outlined-basic"
+            label = "Blurb"
+            variant = "outlined"
+            value = {userData.blurb}
+            onChange = {handleChangeInput}
+        />
+        <Autocomplete
+            disablePortal
+            options={list}
+            renderInput={(params) => (
+            <TextField {...params} label="Courses: " />
+            )}
+        />
         <h3>Upload Profile Picture</h3>
         <FileUploader
           types={fileTypes}
-        //   name="profilePic"
           handleChange={handleFileDrop}
         />
-        <h3>User Details:</h3>
-        <p>Name: {userData.name}</p>
-        <p>Gender: {userData.gender}</p>
-        <p>Faculty: {userData.faculty}</p>
-        <p>Courses: {userData.courses}</p>
-        <img src={userData.profilePic} alt="Profile" />
+        <div>   
+            <h3 class="text-black">User Details:</h3>
+            <p class="text-black">Name: {userData.name}</p>
+            <p class="text-black">Gender: {userData.gender}</p>
+            <p class="text-black">Faculty: {userData.faculty}</p>
+            <p class="text-black">Courses: {userData.courses}</p>
+            <img src={userData.profilePic} alt="Profile" />
       </div>
     </div>
   );
