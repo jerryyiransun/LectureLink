@@ -27,16 +27,17 @@ export const UserConfigPage = () => {
   });
 
   const [file, setFile] = useState(null);
-  const list = [
-    { label: "APSC 101", value: "APSC 101" },
-    { label: "CPEN 221", value: "CPEN 221" },
-    { label: "CPEN 211", value: "CPEN 211" },
-    { label: "CPEN 213", value: "CPEN 213" },
-    { label: "CPEN 211", value: "CPEN 214 " },
-    { label: "CPEN 211", value: "CPEN 215 " },
-    { label: "CPEN 211", value: "CPEN 216 " },
-    { label: "CPEN 211", value: "CPEN 217 " },
-  ];
+  const [list, setList] = useState([]);
+
+  const fetchCourses = async () => {
+    data = await axios.get("http://localhost:8000/courses");
+    return data.json;
+  }
+
+  useEffect(() => {
+    const returnData = fetchCourses();
+    setList(returnData);
+  }, []);
 
   const handleFileDrop = (dropFile) => {
     const fileReader = new FileReader();

@@ -70,6 +70,7 @@ app.post("/register", cors(), async (req, res) => {
       interests: "",
       blurb: "",
       courses: [],
+      like: []
     });
   } catch (err) {
     console.log(err);
@@ -167,7 +168,7 @@ app.post("/updateProfile", cors(), async (req, res) => {
     interests: req.body.interests,
     blurb: req.body.blurb,
     courses: req.body.courses,
-    profilePic: req.body.profilePic,
+    profilePic: req.body.profilePic,,
   };
 
   try {
@@ -232,7 +233,7 @@ app.get("/getinfo", async (req, res) => {
     const db = client.db("UBC");
     const collection = db.collection("students");
 
-    const profile = await collection.find({ _id: req.body._id }).toArray();
+    const profile = await collection.find({ _id: req.body.data._id }).toArray();
     res.status(200).json(profile);
   } catch (err) {
     console.log(err);
@@ -249,13 +250,13 @@ app.get("/getinfo", async (req, res) => {
  * Request Body:
  * - _id (String): Unique identifier for student.
  */
-app.get("/course", async (req, res) => {
+app.get("/profiles", async (req, res) => {
   try {
     const db = client.db("UBC");
     const collection = db.collection("students");
-    const course = req.body.course;
+    const course = req.body.data.course;
 
-    let students = await collection.find({}).toArray();
+    const students = await collection.find({}).toArray();
     students = students.filter((student) => student.courses.includes(course));
     res.status(200).json(students);
   } catch (err) {
@@ -268,7 +269,7 @@ app.get("/filter", async (req, res) => {
   const db = client.db("UBC");
   const collection = db.collection("students");
   try {
-    const student_courses = req.body.courses;
+    const student_courses = req.body.data.courses;
     let students = await collection.find({}).toArray();
     let studentCountMap = new Map();
 
@@ -299,8 +300,46 @@ app.get("/filter", async (req, res) => {
       .sort((a, b) => b[1] - a[1])
       .map((item) => item[0]);
 
-    res.status(200).json(sortedStudents);
+  
+
+  res.status(200).json(sortedStudents);
   } catch (err) {
     console.log(err);
   }
 });
+
+app.post("/like", async(req, res) => {
+  const db = client.db("UBC");
+  const collection = db.collection("students");
+  try{
+    const liked_email = req.body.data.email;
+    const cur_student = req.body.data._id;
+    const cur_email = req.body.data.student_email;
+
+    const updateResult = await collection.updateOne(
+      { _id : cur_student },
+      { $addToSet : {like : liked_email } }
+    );
+
+    const students = await collection.find({email : like_email}).toArray();
+    let matchedStudents = [cur_email];
+    for (let student of students) {
+      if (student.like.includes(cur_email)) {
+        matchedStudents.push(student.email);
+      }
+    }
+
+    if (updateResult.matchedCount === 0) {
+      res.status(404).send("Student not found");
+    } else if (updateResult.modifiedCount === 0) {
+      res.status(304).send("Student already liked this email");
+    } else {
+      res.status(200).json({
+        message : "Match Found",
+        matchedStudents : matchedStudents
+      });
+    }    
+  } catch (error) {
+    console.log(error);
+  }
+}) 
