@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
 import defaultPfp from "../../assets/default-pfp.png";
-import { Row, Col, Container, Form, Button } from "react-bootstrap";
+import Select from "react-select";
+import styles from "./UserConfigPage.module.css";
+
+import { Row, Col, Form, Button, FloatingLabel } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 
 const fileTypes = ["JPG", "PNG", "GIF"];
@@ -22,26 +24,17 @@ export const UserConfigPage = () => {
     },
   });
 
-  const [userData, setUserData] = useState({
-    name: "",
-    pronouns: "",
-    faculty: "",
-    residenceStatus: "",
-    interests: "",
-    blurb: "",
-    courses: [],
-    profilePic: "",
-  });
   const [file, setFile] = useState(null);
-  const list = ["APSC 101", "CPEN 221", "CPSC 210", "CPSC 221", "CPSC 213"];
-
-  const handleChangeInput = (e) => {
-    const { name, value } = e.target;
-    setUserData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  const list = [
+    { label: "APSC 101", value: "APSC 101" },
+    { label: "CPEN 221", value: "CPEN 221" },
+    { label: "CPEN 211", value: "CPEN 211" },
+    { label: "CPEN 213", value: "CPEN 213" },
+    { label: "CPEN 211", value: "CPEN 214 " },
+    { label: "CPEN 211", value: "CPEN 215 " },
+    { label: "CPEN 211", value: "CPEN 216 " },
+    { label: "CPEN 211", value: "CPEN 217 " },
+  ];
 
   const handleFileDrop = (dropFile, event) => {
     const fileReader = new FileReader();
@@ -65,101 +58,107 @@ export const UserConfigPage = () => {
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
-      <Container>
-        <Row>
-          <Col>
-            <Row>
-              <div className="config-page-profile">
-                <h3>User Details:</h3>
-                <p>Name: {userData.name}</p>
-                <p>Gender: {userData.gender}</p>
-                <p>Faculty: {userData.faculty}</p>
-                <p>Courses: {userData.courses}</p>
-                <img
-                  src={userData.profilePic ? userData.profilePic1 : defaultPfp}
-                  className="rounded-circle"
-                  style={{ height: "100px", width: "100px" }}
-                  alt="Profile"
-                />
-              </div>
-            </Row>
-          </Col>
-          <Col>
-            <Row>
-              <Col>
-                <TextField
-                  id="outlined-basic"
-                  label="Name"
-                  variant="outlined"
+      <div className="d-flex flex-column justify-content-center align-items-center gap-4  ">
+        <h1>Profile</h1>
+        <img
+          src={defaultPfp}
+          style={{ height: "150px", textAlign: "center" }}
+        />
+        <FileUploader
+          types={fileTypes}
+          handleChange={handleFileDrop}
+          {...register("profilePfp")}
+        />
+        <div className={styles.gridContainer}>
+          <Row className="mb-3">
+            <Form.Group as={Col} controlId="formGridEmail">
+              <FloatingLabel controlId="name" label="Name">
+                <Form.Control
+                  type="text"
+                  placeholder="Leave a comment here"
                   {...register("name")}
                 />
-              </Col>
-              <Col>
-                <TextField
-                  id="outlined-basic"
-                  label="Pronouns"
-                  variant="outlined"
+              </FloatingLabel>
+            </Form.Group>
+
+            <Form.Group as={Col} controlId="formGridPassword">
+              <FloatingLabel controlId="pronouns" label="Pronouns">
+                <Form.Control
+                  type="text"
+                  placeholder="Leave a comment here"
                   {...register("pronouns")}
                 />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <TextField
-                  id="outlined-basic"
-                  label="Faculty/Major"
-                  variant="outlined"
+              </FloatingLabel>
+            </Form.Group>
+          </Row>
+          <Row className="mb-3">
+            <Form.Group as={Col} controlId="formGridEmail">
+              <FloatingLabel controlId="faculty" label="Faculty/Major">
+                <Form.Control
+                  type="text"
+                  placeholder="Leave a comment here"
                   {...register("faculty")}
                 />
-              </Col>
-              <Col>
-                <TextField
-                  id="outlined-basic"
-                  label="Residence Status"
-                  variant="outlined"
+              </FloatingLabel>
+            </Form.Group>
+
+            <Form.Group as={Col} controlId="formGridPassword">
+              <FloatingLabel
+                controlId="residenceStatus"
+                label="  Residence Status"
+              >
+                <Form.Control
+                  type="text"
+                  placeholder="Leave a comment here"
                   {...register("residenceStatus")}
                 />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <TextField
-                  id="outlined-basic"
-                  label="Interests"
-                  variant="outlined"
-                  {...register("interests")}
-                />
-              </Col>
-              <Col>
-                <TextField
-                  id="outlined-basic"
-                  label="Blurb"
-                  variant="outlined"
-                  {...register("blurb")}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Autocomplete
-                disablePortal
-                options={list}
-                renderInput={(params) => (
-                  <TextField {...params} label="Courses: " />
-                )}
+              </FloatingLabel>
+            </Form.Group>
+          </Row>
+
+          <Form.Group as={Col} controlId="interests">
+            <FloatingLabel
+              controlId="interests"
+              label="Interests"
+              className="mb-3"
+            >
+              <Form.Control
+                as="textarea"
+                placeholder="Leave a comment here"
+                {...register("interests")}
               />
-            </Row>
-            <Row>
-              <h3>Upload Profile Picture</h3>
-              <FileUploader
-                types={fileTypes}
-                handleChange={handleFileDrop}
-                {...register("profilePfp")}
+            </FloatingLabel>
+          </Form.Group>
+
+          <Form.Group as={Col} controlId="blurb">
+            <FloatingLabel controlId="blurb" label="Blurb" className="mb-3">
+              <Form.Control
+                as="textarea"
+                placeholder="Leave a comment here"
+                rows={3}
+                {...register("blurb")}
               />
-            </Row>
-            <Button type="submit">Submit Form</Button>
-          </Col>
-        </Row>
-      </Container>
+            </FloatingLabel>
+          </Form.Group>
+
+          <Form.Group as={Col} controlId="formGridState">
+            <Select
+              closeMenuOnSelect={false}
+              styles={{ zIndex: 1000 }}
+              isMulti
+              options={list}
+              className="mb-3"
+              renderInput={(params) => (
+                <TextField {...params} label=" Courses: " />
+              )}
+            />
+          </Form.Group>
+        </div>
+
+        <Button variant="primary" type="submit">
+          Submit
+        </Button>
+      </div>
     </Form>
   );
 };

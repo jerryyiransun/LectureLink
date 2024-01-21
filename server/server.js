@@ -31,7 +31,28 @@ app.listen(8000, async () => {
   client.connect();
 });
 
-// Tested
+/**
+ * POST endpoint to create a new student record.
+ *
+ * Accepts JSON data with a student's UID and email, then creates a new document 
+ * in the 'students' collection of the 'UBC' database. Additional student fields 
+ * are initialized with default values.
+ *
+ * Route: POST /courses
+ * 
+ * Request Body:
+ * - uid (String): Unique identifier for the student.
+ * - email (String): Email address of the student.
+ *
+ * On success, adds a new student record to the database.
+ * On error, logs the error without interrupting the server.
+ *
+ * Example Request Body:
+ * {
+ *   "uid": "12345",
+ *   "email": "student@example.com"
+ * }
+ */
 app.post("/courses", async (req, res) => {
   const input = req.body;
   try {
@@ -58,7 +79,43 @@ app.post("/courses", async (req, res) => {
 
 });
 
-// Not tested
+/**
+ * POST endpoint to update student record.
+ *
+ * Accepts JSON data with a student's UID, email, profile picture etc.
+ * Then creates a new document in the 'students' collection of the 'UBC' database. 
+ *
+ * Route: POST /config
+ * 
+ * Request Body:
+ * - uid (String): Unique identifier for the student.
+ * - email (String): Email address of the student.
+ * - name (String): Name of student.
+ * - pronouns (String): Pronouns of student.
+ * - facultyMajor (String): Associated faculty/major of student.
+ * - residenceStatus (String): Residence status of student.
+ * - interests (String): Interests of student.
+ * - blurb (String): Intriduction of student.
+ * - courses (Array): Courses the student takes.
+ * - profilePic (String): 64base String of students profile picture;
+ * 
+ * On success, updates the corresponding student's information on database.
+ * On error, logs the error without interrupting the server.
+ *
+ * Example Request Body:
+ * {
+ *   "uid" : "21234567890",
+ *   "courses" : "name@example.com",
+ *   "name" : "John Doe",
+ *   "pronouns" : "He/Him",
+ *   "facultyMajor" : "ECE/computer engineering",
+ *   "residenceStatus" : "Domestic",
+ *   "interests" : "biking, hiking, coding",
+ *   "blurb" : "Hi, I'm John Doe",
+ *   "courses" : ["AMNE 356", "AMNE 261", "ANTH 461"],
+ *   "profilePic" : ""
+ *  } 
+ */
 app.post("/config", upload.single('profilePic'), async (req, res) => {
   const uid = req.body.uid;
   let profilePicBase64;
@@ -99,7 +156,18 @@ app.post("/config", upload.single('profilePic'), async (req, res) => {
   
 });
 
-// Tested
+/**
+ * GET endpoint to retrieve all courses.
+ *
+ * Retrives all courses in the Course Database.
+ *
+ * Route: GET /courses
+ * 
+ *
+ * On success, returns all courses in Database.
+ * On error, logs the error without interrupting the server.
+ *
+ */
 app.get("/courses", cors(), async (req, res) => {
   const db = client.db("UBC");
   const collection = db.collection("courses");
