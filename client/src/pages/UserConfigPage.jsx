@@ -6,12 +6,12 @@ import Select from "react-select";
 import styles from "./UserConfigPage.module.css";
 
 import { Row, Col, Form, Button, FloatingLabel } from "react-bootstrap";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 const fileTypes = ["JPG", "PNG", "GIF"];
 
 export const UserConfigPage = () => {
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, control } = useForm({
     defaultValues: {
       name: "",
       pronouns: "",
@@ -36,7 +36,7 @@ export const UserConfigPage = () => {
     { label: "CPEN 211", value: "CPEN 217 " },
   ];
 
-  const handleFileDrop = (dropFile, event) => {
+  const handleFileDrop = (dropFile) => {
     const fileReader = new FileReader();
 
     // called when file reading is done
@@ -57,9 +57,7 @@ export const UserConfigPage = () => {
     <Form onSubmit={handleSubmit(onSubmit)}>
       <div className="d-flex flex-column justify-content-center align-items-center gap-4  ">
         <h1>Profile</h1>
-        <img
-          src={file ? file : defaultPfp}
-        />
+        <img src={file ? file : defaultPfp} />
         <FileUploader
           types={fileTypes}
           handleChange={handleFileDrop}
@@ -138,14 +136,22 @@ export const UserConfigPage = () => {
           </Form.Group>
 
           <Form.Group as={Col} controlId="formGridState">
-            <Select
-              closeMenuOnSelect={false}
-              styles={{ zIndex: 1000 }}
-              isMulti
-              options={list}
-              className="mb-3"
-              renderInput={(params) => (
-                <TextField {...params} label=" Courses: " />
+            <Controller
+              control={control}
+              name="courses"
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                <Select
+                  onChange={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                  name={name}
+                  ref={ref}
+                  closeMenuOnSelect={false}
+                  isMulti
+                  options={list}
+                  className="mb-3"
+                  placeholder="Select Courses..."
+                />
               )}
             />
           </Form.Group>
