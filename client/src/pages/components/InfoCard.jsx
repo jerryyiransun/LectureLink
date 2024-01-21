@@ -1,32 +1,31 @@
 import React from "react";
 import styles from "./InfoCard.module.css";
+import { BlurbModal } from "./BlurbModal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
-export const InfoCard = ({
-  name,
-  pronouns,
-  major,
-  courses,
-  imageUrl,
-}) => {
+export const InfoCard = ({ name, pronouns, major, courses = [], imageUrl, openPopup }) => {
   return (
     <div className={styles.cardContainer}>
-      <div className={styles.profileCourses}>
-        <div className={styles.profileInfo}>
+      <div className={styles.profileInfo}>
         <img src={imageUrl} alt="Profile" className={styles.profileImage} />
-        <span className={styles.namePronouns}>
-          {name} ({pronouns})
-        </span>
-        <span className={styles.facultyMajor}>
-         {major}
-        </span>
+        <div className={styles.textIcon}>
+          <div className={styles.blurbs}>
+            <div className={styles.namePronouns}>
+              {name && <span className="text-[25px]">{name}</span>}
+              {pronouns && <h2>({pronouns})</h2>}
+            </div>
+            {major && <h2>{major}</h2>}
+          </div>
+          <FontAwesomeIcon icon={faArrowUp} className={styles.icon} onClick={openPopup}/>
+        </div>
       </div>
       <div className={styles.courses}>
         {courses.map((course, index) => (
-          <span key={index} className={styles.course}>
-            {course}
-          </span>
+          <BlurbModal key={index} name={course} />
         ))}
-      </div>
       </div>
     </div>
   );
