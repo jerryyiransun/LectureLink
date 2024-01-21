@@ -230,7 +230,7 @@ app.get("/courses", cors(), async (req, res) => {
  *   "_id" : "1234567890",
  *  }
  */
-app.get("/getinfo", async (req, res) => {
+app.get("/getinfo", cors(), async (req, res) => {
   try {
     const db = client.db("UBC");
     const collection = db.collection("students");
@@ -252,7 +252,7 @@ app.get("/getinfo", async (req, res) => {
  * Request Body:
  * - _id (String): Unique identifier for student.
  */
-app.get("/profiles", async (req, res) => {
+app.get("/profiles", cors(), async (req, res) => {
   try {
     const db = client.db("UBC");
     const collection = db.collection("students");
@@ -270,7 +270,7 @@ app.get("/profiles", async (req, res) => {
 });
 
 // need documentations
-app.get("/filter", async (req, res) => {
+app.get("/filter", cors(), async (req, res) => {
   const db = client.db("UBC");
   const collection = db.collection("students");
   try {
@@ -311,7 +311,7 @@ app.get("/filter", async (req, res) => {
   }
 });
 
-app.post("/like", async (req, res) => {
+app.post("/like", cors(), async (req, res) => {
   const db = client.db("UBC");
   const collection = db.collection("students");
   try {
@@ -325,11 +325,13 @@ app.post("/like", async (req, res) => {
     );
 
     const students = await collection.find({ email: like_email }).toArray();
-    let matchedStudents = [cur_email];
+    let matched_pairs = [];
     for (let student of students) {
+      let matchedStudents = [cur_email];
       if (student.like.includes(cur_email)) {
         matchedStudents.push(student.email);
       }
+      matched_pairs.push(matchedStudents);
     }
 
     if (updateResult.matchedCount === 0) {
@@ -339,7 +341,7 @@ app.post("/like", async (req, res) => {
     } else {
       res.status(200).json({
         message: "Match Found",
-        matchedStudents: matchedStudents,
+        matched_pairs: matched_pairs,
       });
     }
   } catch (error) {
