@@ -277,12 +277,19 @@ app.get("/filter", async (req, res) => {
         const cur_student_courses = student.courses;
 
         let count = 0;
+        let same_courses = [];
+        let diff_courses = [];
 
         for (let course of cur_student_courses) {
           if (student_courses.includes(course)) {
             count += 1;
+            same_courses.push(course);
+          } else {
+            diff_courses.push(course);
           }
         }
+        student.same_courses = same_courses;
+        student.diff_courses = diff_courses;
 
         studentCountMap.set(student, count);
       }
