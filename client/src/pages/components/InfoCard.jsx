@@ -14,7 +14,7 @@ export const InfoCard = ({ name, pronouns, major, courses = [], imageUrl, openPo
         <div className={styles.textIcon}>
           <div className={styles.blurbs}>
             <div className={styles.namePronouns}>
-              {name && <span className="text-[25px]">{name}</span>}
+              {name && <h2>{name}</h2>}
               {pronouns && <h2>({pronouns})</h2>}
             </div>
             {major && <h2>{major}</h2>}
