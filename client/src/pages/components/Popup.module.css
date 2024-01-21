@@ -8,6 +8,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1000;
 }
 
 .popup {
@@ -18,6 +19,7 @@
     padding: 20px;
     box-sizing: border-box;
     overflow: auto;
+    z-index: 1000;
 }
 
 .image {
