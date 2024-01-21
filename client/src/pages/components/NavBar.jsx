@@ -5,6 +5,7 @@ import { handleSignOut } from "../../api/firebasApi.js";
 import axios from "axios";
 
 export const NavBar = () => {
+  console.log(auth?.currentUser);
   return (
     <Navbar
       bg="dark"
@@ -34,7 +35,7 @@ export const NavBar = () => {
         </Nav>
         <Nav>
           <div className="text-white font-weight-bold mx-2 p-0 d-flex justify-content-center align-items-center">
-            {auth.currentUser
+            {auth?.currentUser
               ? `Logged in as ${auth.currentUser.email}`
               : "Not logged in"}
           </div>
@@ -48,7 +49,7 @@ export const NavBar = () => {
               }
             }}
           >
-            {auth.currentUser ? "Sign Out" : "Sign In"}
+            {auth?.currentUser ? "Sign Out" : "Sign In"}
           </Button>
         </Nav>
       </Container>
