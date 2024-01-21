@@ -3,11 +3,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { GrLike } from "react-icons/gr";
 import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
 import { Card } from "react-bootstrap";
 import { auth } from "../../../firebase/config.js";
 import profilePic from "../../../assets/default-pfp.png";
 import { addLike } from "../../api/userApi.js";
+import emailjs from "@emailjs/browser";
 
 export const InfoCard = ({
   name,
@@ -25,7 +25,41 @@ export const InfoCard = ({
         liked_email: likedEmail,
         _id: auth.currentUser?.uid,
       });
-      return response;
+
+      if (response.status === 304) {
+        alert("You have already liked this user!");
+      } else if (response.status === 200) {
+        alert("You have successfully matched with this user!");
+        console.log(response);
+        Promise.all([
+          emailjs.send(
+            "service_3amt6v9",
+            "template_5wxsx7z",
+            {
+              liked_email: response.data.matched_pair[0].cur_email,
+              liker_email: response.data.matched_pair[1].liked_email,
+              liker_name: response.data.matched_pair[1].liked_student_name,
+            },
+            "-QmFSgsRfPaEkn-oU"
+          ),
+          emailjs.send(
+            "service_3amt6v9",
+            "template_5wxsx7z",
+            {
+              liked_email: response.data.matched_pair[1].liked_email,
+              liker_email: response.data.matched_pair[0].cur_email,
+              liker_name: response.data.matched_pair[0].cur_student_name,
+            },
+            "-QmFSgsRfPaEkn-oU"
+          ),
+        ])
+          .then((response) => {
+            alert("Email successfully sent!", response.status, response.text);
+          })
+          .catch((error) => {
+            console.error("Error sending emails:", error);
+          });
+      }
     } catch (err) {
       console.log(err);
     }
