@@ -19,13 +19,16 @@ export const InfoCard = ({
   likedEmail,
 }) => {
   const likeProfile = async () => {
-    const response = await addLike({
-      cur_email: auth?.currentUser?.email,
-      liked_email: likedEmail,
-      _id: auth.currentUser?.uid,
-    });
-    const data = JSON.parse(response);
-    console.log(data);
+    try {
+      const response = await addLike({
+        cur_email: auth?.currentUser?.email,
+        liked_email: likedEmail,
+        _id: auth.currentUser?.uid,
+      });
+      return response;
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

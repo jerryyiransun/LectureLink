@@ -325,16 +325,24 @@ app.post("/like", cors(), async (req, res) => {
       { _id: cur_student },
       { $addToSet: { like: liked_email } }
     );
-    const curr_student = await collection.find({ email: cur_email });
-    const curr_student_name = curr_student.name;
+    const curr_student = await collection.find({ email: cur_email }).toArray();
+    const curr_student_name = curr_student[0].name;
 
-    const liked_student = await collection.find({ email: liked_email });
-    const liked_student_name = liked_student.name;
+    const liked_student = await collection
+      .find({ email: liked_email })
+      .toArray();
+    const liked_student_name = liked_student[0].name;
 
-    matched_pair = [];
-    if (liked_student.like?.includes(cur_email)) {
-      matched_pair.push({ curr_student_name: cur_email });
-      matched_pair.push({ liked_student_name: liked_email });
+    let matched_pair = [];
+    if (liked_student[0].like?.includes(cur_email)) {
+      matched_pair.push({
+        cur_email: cur_email,
+        curr_student_name: curr_student_name,
+      });
+      matched_pair.push({
+        liked_email: liked_email,
+        liked_student_name: liked_student_name,
+      });
     }
 
     if (updateResult.matchedCount === 0) {
@@ -342,7 +350,7 @@ app.post("/like", cors(), async (req, res) => {
     } else if (updateResult.modifiedCount === 0) {
       res.status(304).send("Student already liked this email");
     } else {
-      console.log(matched_pairs);
+      console.log(matched_pair);
       res.status(200).json({
         matched_pair: matched_pair,
       });
