@@ -68,19 +68,21 @@ export const UserConfigPage = () => {
       <Container>
         <Row>
           <Col>
-            <div className="config-page-profile">
-              <h3>User Details:</h3>
-              <p>Name: {userData.name}</p>
-              <p>Gender: {userData.gender}</p>
-              <p>Faculty: {userData.faculty}</p>
-              <p>Courses: {userData.courses}</p>
-              <img
-                src={userData.profilePic ? userData.profilePic1 : defaultPfp}
-                className="rounded-circle"
-                style={{ height: "100px", width: "100px" }}
-                alt="Profile"
-              />
-            </div>
+            <Row>
+              <div className="config-page-profile">
+                <h3>User Details:</h3>
+                <p>Name: {userData.name}</p>
+                <p>Gender: {userData.gender}</p>
+                <p>Faculty: {userData.faculty}</p>
+                <p>Courses: {userData.courses}</p>
+                <img
+                  src={userData.profilePic ? userData.profilePic1 : defaultPfp}
+                  className="rounded-circle"
+                  style={{ height: "100px", width: "100px" }}
+                  alt="Profile"
+                />
+              </div>
+            </Row>
           </Col>
           <Col>
             <Row>
