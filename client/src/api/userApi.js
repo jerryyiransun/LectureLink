@@ -49,3 +49,16 @@ export const fetchProfiles = async (search) => {
     return []; // Return an empty array or handle the error accordingly
   }
 };
+
+export const addLike = async ({cur_email, liked_email, _id}) => {
+  try {
+    const response = await axios.post("http://localhost:8000/like", {
+      cur_email: cur_email,
+      liked_email: liked_email,
+      _id: _id,
+    });
+    return response;
+  } catch (err) {
+    console.log(err);
+  }
+}

@@ -75,6 +75,7 @@ export const SearchPage = () => {
                     courses={item.courses}
                     imageUrl={item.imageUrl}
                     openPopup={() => handlePopupOpen(item)}
+                    likedEmail={item.email}
                   />
                 ))}
               </>
