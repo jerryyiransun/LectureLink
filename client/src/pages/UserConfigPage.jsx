@@ -8,6 +8,7 @@ import styles from "./UserConfigPage.module.css";
 import { Row, Col, Form, Button, FloatingLabel } from "react-bootstrap";
 import { Controller, useForm } from "react-hook-form";
 import { auth } from "../../firebase/config.js";
+import axios from "axios";
 
 const fileTypes = ["JPG", "PNG", "GIF"];
 
@@ -51,11 +52,12 @@ export const UserConfigPage = () => {
     fileReader.readAsDataURL(dropFile);
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log(data);
     console.log(auth);
-    request_body = {
-      uid: auth.currentUser.uid,
+
+    const request_body = {
+      _id: auth.currentUser.uid,
       name: data.name,
       email: auth.currentUser.email,
       pronouns: data.pronouns,
@@ -64,9 +66,19 @@ export const UserConfigPage = () => {
       interests: data.interests,
       blurb: data.blurb,
       courses: data.courses,
-      file: data.profilePic,
+      profilePic: data.profilePic,
     } 
-    
+    try {
+      const response = await updateProfile(request_body);
+      
+      if (response.ok) {
+        console.log("Profile updated successfully");
+      } 
+
+    } catch (error) {
+      throw new Error(error);
+    }
+
   };
 
   return (
