@@ -114,13 +114,47 @@ app.post("/courses", async (req, res) => {
  *   "profilePic" : ""
  *  } 
  */
-app.post("/updateProfile", upload.single('profilePic'), async (req, res) => {
+// app.post("/updateProfile", upload.single('profilePic'), async (req, res) => {
+//   const _id = req.body._id;
+//   let profilePicBase64;
+
+//   if(req.file) {
+//     profilePicBase64 = req.file.buffer.toString('base64');
+//   }
+
+//   const profile_data = {
+//     name: req.body.name,
+//     pronouns: req.body.pronouns,
+//     facultyMajor: req.body.facultyMajor,
+//     residenceStatus: req.body.residenceStatus,
+//     interests: req.body.interests,
+//     blurb: req.body.blurb,
+//     courses: req.body.courses,
+//     profilePic: profilePicBase64
+//   };
+
+//   try {
+//     const db = client.db("UBC");
+//     const collection = db.collection("students");
+//     const result = await collection.updateOne(
+//       { _id: _id },
+//       { $set: profile_data }
+//     );
+
+//     if (result.matchedCount === 0) {
+//       res.status(404).send("User not found");
+//     } else {
+//       res.status(200).send("User profile updated successfully");
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+  
+// });
+
+app.post("/updateProfile", cors(), async (req, res) => {
   const _id = req.body._id;
   let profilePicBase64;
-
-  if(req.file) {
-    profilePicBase64 = req.file.buffer.toString('base64');
-  }
 
   const profile_data = {
     name: req.body.name,
@@ -130,7 +164,7 @@ app.post("/updateProfile", upload.single('profilePic'), async (req, res) => {
     interests: req.body.interests,
     blurb: req.body.blurb,
     courses: req.body.courses,
-    profilePic: profilePicBase64
+    profilePic: req.body.profilePic
   };
 
   try {

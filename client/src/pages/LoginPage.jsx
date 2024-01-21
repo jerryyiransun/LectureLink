@@ -9,6 +9,7 @@ import { useState } from "react";
 import styles from "./LoginPage.module.css";
 import { auth } from "../../firebase/config.js";
 import { useNavigate } from "react-router-dom";
+import { registerAccount } from "../api/userApi.js";
 
 export const LoginPage = () => {
   const { register, handleSubmit, reset } = useForm({
@@ -21,8 +22,8 @@ export const LoginPage = () => {
   // const history = useHistory();
   const navigate = useNavigate();
 
-  console.log(auth?.currentUser?.email);
-  console.log(auth.currentUser);
+  // console.log(auth?.currentUser?.email);
+  // console.log(auth.currentUser);
 
   const registerUser = async (data) => {
     try {
@@ -31,8 +32,12 @@ export const LoginPage = () => {
         data?.email,
         data?.password
       );
+      
       console.log(response);
+      const dbresponse = await registerAccount({_id: response.user.uid, email: response.user.email})
+      console.log(dbresponse);
     } catch (error) {
+      
       console.log(error);
     }
   };
@@ -46,12 +51,15 @@ export const LoginPage = () => {
         data?.email,
         data?.password
       );
-      console.log(`this is the response: ${response}`);
+      // console.log(`this is the response: ${response}`);
+      console.log("logged in");
+      // console.log(auth.currentUser);
+      // history.replace("/user-config");
+      navigate('/user-config')
     } catch (error) {
-      console.log(error);
+      alert("Invalid email or password");
+      console.log(error)
     }
-    navigate('/user-config')
-  
   };
 
   const handleSignOut = async () => {
@@ -59,6 +67,7 @@ export const LoginPage = () => {
       await signOut(auth);
       console.log("logged out");
     } catch (err) {
+      alert("Error logging out");
       console.log(err);
     }
   };
@@ -194,13 +203,6 @@ export const LoginPage = () => {
           </Row>
         </Container>
       )}
-      <Button
-        onClick={() => {
-          handleSignOut();
-        }}
-      >
-        Sign Out
-      </Button>
     </div>
   );
 };

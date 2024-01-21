@@ -2,6 +2,7 @@ import logo from "../../../assets/logo.png";
 import { Button, Container, Nav, Navbar } from "react-bootstrap";
 import { auth } from "../../../firebase/config.js";
 import { handleSignOut } from "../../api/firebasApi.js";
+import axios from "axios";
 
 export const NavBar = () => {
   return (
@@ -42,8 +43,17 @@ export const NavBar = () => {
               }
             }}
           >
-            {auth.currentUser ? "Sign In" : "Sign Out"}
+            {auth.currentUser ? "Sign Out" : "Sign In"}
           </Button>
+          {/* <Button 
+          onClick={()=>{
+            axios.get('http://localhost:8000/test').then((res)=>{
+              console.log(res.data)
+            })
+          }}
+          >
+
+          </Button> */}
         </Nav>
       </Container>
     </Navbar>
