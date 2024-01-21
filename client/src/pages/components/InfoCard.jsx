@@ -16,7 +16,7 @@ export const InfoCard = ({
   openPopup,
 }) => {
   return (
-    <Card style={{ width: "45%" }}>
+    <Card className={styles.card}>
       <FontAwesomeIcon
         icon={faArrowUp}
         className={styles.icon}
@@ -36,19 +36,14 @@ export const InfoCard = ({
         }
       </Card.Title>
       <Card.Body>
-        <Card.Text>
-          Hello My name is XXX and I am a XXX major. I am interested in XXX and
-          XXX. I am looking for a study partner for XXX. I am available on
-        </Card.Text>
+        <div className={styles.courses}>
+          {courses.map((course, index) => (
+            <Button key={index} disabled>
+              {course}
+            </Button>
+          ))}
+        </div>
       </Card.Body>
-
-      <div className={styles.courses}>
-        {courses.map((course, index) => (
-          <Button key={index} disabled>
-            {course}
-          </Button>
-        ))}
-      </div>
     </Card>
   );
 };
