@@ -102,7 +102,7 @@ app.post("/courses", async (req, res) => {
  * Example Request Body:
  * {
  *   "_id" : "21234567890",
- *   "courses" : "name@example.com",
+ *   "email" : "name@example.com",
  *   "name" : "John Doe",
  *   "pronouns" : "He/Him",
  *   "facultyMajor" : "ECE/computer engineering",

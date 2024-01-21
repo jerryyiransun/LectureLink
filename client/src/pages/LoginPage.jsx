@@ -49,6 +49,8 @@ export const LoginPage = () => {
       console.log(`this is the response: ${response}`);
     } catch (error) {
       console.log(error);
+      alert("Incorrect login attempt");
+      return;
     }
     navigate('/user-config')
   
