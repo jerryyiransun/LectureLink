@@ -87,7 +87,7 @@ export const LoginPage = () => {
                         <Form.Label>Password</Form.Label>
                         <Form.Control
                           autoFocus
-                          type="text"
+                          type="password"
                           placeholder="Enter password"
                           name="password"
                           {...register("password")}
@@ -151,7 +151,7 @@ export const LoginPage = () => {
                         <Form.Label>Password</Form.Label>
                         <Form.Control
                           autoFocus
-                          type="text"
+                          type="password"
                           placeholder="Enter password"
                           name="password"
                           {...register("password")}

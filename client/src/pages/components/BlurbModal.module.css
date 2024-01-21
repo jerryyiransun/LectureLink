@@ -1,11 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap");
 
 .modal {
-        font-family: 'Roboto', sans-serif;
-        margin-top: 15%;
-        margin-left: 25%;
-        margin-right: 25%;
-        margin-bottom: 15%;
-        background-color: yellowgreen;
-        border-radius: 25%;
+  font-family: "Roboto", sans-serif;
+  font-size: 8px;
+  background-color: rgb(119, 127, 240);
+  border-radius: 40%;
+  white-space: nowrap;
+  padding: 5px;
 }
