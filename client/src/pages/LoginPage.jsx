@@ -1,21 +1,60 @@
 import { useForm } from "react-hook-form";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 import { useState } from "react";
 import styles from "./LoginPage.module.css";
+import { auth } from "../../firebase/config.js";
 
 export const LoginPage = () => {
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
       email: "",
-      username: "",
+      password: "",
     },
   });
 
+  console.log(auth?.currentUser?.email);
+  console.log(auth.currentUser);
+
+  const registerUser = async (data) => {
+    try {
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        data?.email,
+        data?.password
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const [isRegister, setIsRegister] = useState(false);
 
-  const onSubmit = (data, e) => {
-    e.preventDefault();
-    console.log(data);
+  const handleSignIn = async (data) => {
+    try {
+      const response = await signInWithEmailAndPassword(
+        auth,
+        data?.email,
+        data?.password
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      console.log("logged out");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -29,7 +68,7 @@ export const LoginPage = () => {
                 <Card.Body>
                   <h1 className="text-center">Register</h1>
                   <div className="mb-3 mt-4">
-                    <Form onSubmit={handleSubmit(onSubmit)}>
+                    <Form onSubmit={handleSubmit(registerUser)}>
                       <Form.Group className="mb-3" size="lg" controlId="email">
                         <Form.Label>Email</Form.Label>
                         <Form.Control
@@ -43,15 +82,15 @@ export const LoginPage = () => {
                       <Form.Group
                         className="mb-3"
                         size="lg"
-                        controlId="username"
+                        controlId="password"
                       >
-                        <Form.Label>Username</Form.Label>
+                        <Form.Label>Password</Form.Label>
                         <Form.Control
                           autoFocus
                           type="text"
-                          placeholder="Enter username"
-                          name="username"
-                          {...register("username")}
+                          placeholder="Enter password"
+                          name="password"
+                          {...register("password")}
                         />
                       </Form.Group>
                       <div className="d-grid">
@@ -93,7 +132,7 @@ export const LoginPage = () => {
                 <Card.Body>
                   <h1 className="text-center">Login</h1>
                   <div className="mb-3 mt-4">
-                    <Form onSubmit={handleSubmit(onSubmit)}>
+                    <Form onSubmit={handleSubmit(handleSignIn)}>
                       <Form.Group className="mb-3" size="lg" controlId="email">
                         <Form.Label>Email</Form.Label>
                         <Form.Control
@@ -107,15 +146,15 @@ export const LoginPage = () => {
                       <Form.Group
                         className="mb-3"
                         size="lg"
-                        controlId="username"
+                        controlId="password"
                       >
-                        <Form.Label>Username</Form.Label>
+                        <Form.Label>Password</Form.Label>
                         <Form.Control
                           autoFocus
                           type="text"
-                          placeholder="Enter username"
-                          name="username"
-                          {...register("username")}
+                          placeholder="Enter password"
+                          name="password"
+                          {...register("password")}
                         />
                       </Form.Group>
                       <div className="d-grid">
@@ -149,6 +188,13 @@ export const LoginPage = () => {
           </Row>
         </Container>
       )}
+      <Button
+        onClick={() => {
+          handleSignOut();
+        }}
+      >
+        Sign Out
+      </Button>
     </div>
   );
 };
