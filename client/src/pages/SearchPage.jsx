@@ -1,17 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import styles from "./SearchPage.module.css";
 import { InfoCard } from "./components/InfoCard";
 import { Popup } from "./components/Popup";
+import { auth } from "../../firebase/config.js";
+import axios from "axios";
 
 export const SearchPage = () => {
   const [search, setSearch] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [popupOpen, setPopupOpen] = useState(false);
   const [popupInfo, setPopupInfo] = useState(null);
-
-  console.log(search);
+  const [allCourses, setAllCourses] = useState([]);
 
   const handlePopupOpen = (data) => {
     setPopupOpen(true);
@@ -29,71 +30,44 @@ export const SearchPage = () => {
     }
   };
 
-  const data = [
-    {
-      name: "John Doe",
-      pronouns: "he/him",
-      major: "Software Engineering",
-      courses: ["CPEN 221", "CPEN 211", "MATH 220"],
-      imageUrl:
-        "https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_square.jpg",
-      interests: ["Coding", "Hiking", "Music"],
-      introParagraph: "Hello, I'm John Doe and I love coding...",
-      residenceStatus: "Commuter",
-    },
-    {
-      name: "Jane Doe",
-      pronouns: "she/her",
-      major: "Computer Science",
-      courses: ["CPSC 110", "CPSC 121", "CPSC 210"],
-      imageUrl:
-        "https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_square.jpg",
-      interests: ["Reading", "Gaming", "Cooking"],
-      introParagraph: "Hi, I'm Jane Doe and I enjoy reading...",
-      residenceStatus: "On Residence",
-    },
-    {
-      name: "Bob Smith",
-      pronouns: "he/him",
-      major: "Information Systems",
-      courses: ["COMM 335", "COMM 437", "CPSC 210"],
-      imageUrl:
-        "https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_square.jpg",
-      interests: ["Sports", "Photography", "Traveling"],
-      introParagraph: "Hey, I'm Bob Smith and I love sports...",
-      residenceStatus: "Commuter",
-    },
-    {
-      name: "Alice Johnson",
-      pronouns: "she/her",
-      major: "Data Science",
-      courses: ["STAT 300", "CPSC 340", "CPSC 210"],
-      imageUrl:
-        "https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_square.jpg",
-      interests: ["Data Analysis", "Hiking", "Painting"],
-      introParagraph:
-        "Hello, I'm Alice Johnson and I'm passionate about data analysis...",
-      residenceStatus: "On Residence",
-    },
-    {
-      name: "Charlie Brown",
-      pronouns: "they/them",
-      major: "Cybersecurity",
-      courses: ["CPSC 418", "CPSC 416", "CPSC 317"],
-      imageUrl:
-        "https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_square.jpg",
-      interests: ["Cybersecurity", "Gaming", "Music"],
-      introParagraph:
-        "Hi, I'm Charlie Brown and I'm interested in cybersecurity...",
-      residenceStatus: "Commuter",
-    },
-  ];
+  const fetchProfiles = async (search) => {
+    try {
+      const response = await axios.get("http://localhost:8000/profiles", {
+        params: {
+          _id: auth?.currentUser?.uid,
+          courses: search,
+        },
+      });
+
+      console.log("Profiles:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching profiles:", error);
+      return []; // Return an empty array or handle the error accordingly
+    }
+  };
+
+  const fetchCourses = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/courses");
+      console.log("Courses:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+      return []; // Return an empty array or handle the error accordingly
+    }
+  };
+
+  useEffect(() => {
+    const returnData = fetchCourses();
+    setAllCourses(returnData);
+  }, []);
 
   // Extract all courses from the data
-  const allCourses = data.flatMap((item) => item.courses);
+  // const allCourses = fetchCourses();
 
   // Remove duplicates
-  const uniqueCourses = [...new Set(allCourses)];
+  // const uniqueCourses = [...new Set(allCourses)];
 
   return (
     <>
@@ -106,7 +80,7 @@ export const SearchPage = () => {
           <div className={styles.searchContainer}>
             <Autocomplete
               disablePortal
-              options={uniqueCourses}
+              options={allCourses}
               renderInput={(params) => (
                 <TextField {...params} label="Search for a course..." />
               )}
@@ -114,7 +88,7 @@ export const SearchPage = () => {
             />
           </div>
           <div className={styles.cardContainer}>
-            {data
+            {/* {data
               .filter((item) => item.courses.includes(search))
               .map((item, index) => (
                 <InfoCard
@@ -126,7 +100,19 @@ export const SearchPage = () => {
                   imageUrl={item.imageUrl}
                   openPopup={() => handlePopupOpen(item)}
                 />
-              ))}
+              ))} */}
+              {fetchProfiles(search).map((item, index) => (
+                <InfoCard
+                  key={index}
+                  name={item.name}
+                  pronouns={item.pronouns}
+                  major={item.major}
+                  courses={item.courses}
+                  imageUrl={item.imageUrl}
+                  openPopup={() => handlePopupOpen(item)}
+                />
+              )
+              )}
           </div>
         </div>
       </div>
