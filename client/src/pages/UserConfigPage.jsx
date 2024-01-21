@@ -41,11 +41,8 @@ export const UserConfigPage = () => {
 
     // called when file reading is done
     fileReader.onload = function () {
-      console.log(fileReader.result);
-      setUserData((prevData) => ({
-        ...prevData,
-        profilePic: fileReader.result,
-      }));
+      console.log("PFP Picture: " + fileReader.result);
+      setFile(fileReader.result);
     };
 
     console.log(dropFile);
@@ -61,8 +58,7 @@ export const UserConfigPage = () => {
       <div className="d-flex flex-column justify-content-center align-items-center gap-4  ">
         <h1>Profile</h1>
         <img
-          src={defaultPfp}
-          style={{ height: "150px", textAlign: "center" }}
+          src={file ? file : defaultPfp}
         />
         <FileUploader
           types={fileTypes}
