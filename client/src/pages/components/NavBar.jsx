@@ -33,6 +33,11 @@ export const NavBar = () => {
           <Nav.Link href="/search">Search</Nav.Link>
         </Nav>
         <Nav>
+          <div className="text-white font-weight-bold mx-2 p-0 d-flex justify-content-center align-items-center">
+            {auth.currentUser
+              ? `Logged in as ${auth.currentUser.email}`
+              : "Not logged in"}
+          </div>
           <Button
             variant="secondary"
             onClick={() => {
@@ -45,15 +50,6 @@ export const NavBar = () => {
           >
             {auth.currentUser ? "Sign Out" : "Sign In"}
           </Button>
-          {/* <Button 
-          onClick={()=>{
-            axios.get('http://localhost:8000/test').then((res)=>{
-              console.log(res.data)
-            })
-          }}
-          >
-
-          </Button> */}
         </Nav>
       </Container>
     </Navbar>
