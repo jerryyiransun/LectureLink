@@ -1,6 +1,7 @@
 const axios = require("axios");
 const express = require("express");
 const cors = require("cors");
+const multer = require("multer");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
 require("dotenv").config();
@@ -8,6 +9,9 @@ require("dotenv").config();
 const client = new MongoClient(process.env.MONGO_URL);
 
 const app = express();
+
+const storage = multer.memoryStorage();
+const upload = multer({storage : storage});
 
 const corsOptions = {
   //   origin: "https://leapconcis.com",
@@ -27,28 +31,42 @@ app.listen(8000, async () => {
   client.connect();
 });
 
+// Tested
 app.post("/courses", async (req, res) => {
   const input = req.body;
+  try {
+    const db = client.db("UBC");
+    const collection = db.collection("students");
 
-  const db = client.db("UBC");
-  const collection = db.collection("students");
+    await collection.insertOne({
+      uid: input.uid,
+      email: input.email,
+  
+      name: "",
+      pronouns: "",
+      facultyMajor: "",
+      residenceStatus: "",
+      interests: "",
+      blurb: "",
+      courses: [],
+    });
+  } catch(err) {
+    console.log(err);
+  } finally {
+    await client.close();
+  }
 
-  collection.insertOne({
-    uid: input.uid,
-    email: input.email,
-
-    name: "",
-    pronouns: "",
-    facultyMajor: "",
-    residenceStatus: "",
-    interests: "",
-    blurb: "",
-    courses: "",
-  });
 });
 
-app.post("/config", async (req, res) => {
-  const uid = req.body.userID;
+// Not tested
+app.post("/config", upload.single('profilePic'), async (req, res) => {
+  const uid = req.body.uid;
+  const courses = req.body.courses;
+  let profilePicBase64;
+
+  if(req.file) {
+    profilePicBase64 = req.file.buffer.toString('base64');
+  }
 
   const profile_data = {
     name: req.body.name,
@@ -58,10 +76,10 @@ app.post("/config", async (req, res) => {
     interests: req.body.interests,
     blurb: req.body.blurb,
     courses: req.body.courses,
+    profilePic: profilePicBase64
   };
 
   try {
-    await client.connect();
     const db = client.db("UBC");
     const collection = db.collection("students");
     const result = await collection.updateOne(
@@ -75,11 +93,30 @@ app.post("/config", async (req, res) => {
       res.status(200).send("User profile updated successfully");
     }
   } catch (error) {
-  } finally {
-    await client.close();
+    console.log(error);
   }
+
+  if(courses) {
+    try {
+      const db = client.db("UBC");
+      const collection = db.collection("courses");
+      
+      for(let course of courses) {
+        await collection.updateOne(
+          {code : course},
+          { $addToSet : {enroll_std_id : uid}}
+        );
+      }
+    } catch(error) {
+      console.log(error);
+    } finally {
+      await client.close();
+    }
+  }
+  
 });
 
+// Tested
 app.get("/courses", cors(), async (req, res) => {
   const db = client.db("UBC");
   const collection = db.collection("courses");
