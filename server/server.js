@@ -262,7 +262,7 @@ app.get("/profiles", cors(), async (req, res) => {
     const students = await collection.find({}).toArray();
     console.log(students);
     const students_take_course = students.filter((student) =>
-      student.courses?.includes(course)
+      student.courses?.includes(course) && student._id !== req.query._id
     );
 
     res.status(200).json(students_take_course);
