@@ -153,7 +153,7 @@ app.post("/register", cors(), async (req, res) => {
 // });
 
 app.post("/updateProfile", cors(), async (req, res) => {
-  const _id = req.body._id;
+  const _id = req.body?.data?._id;
   // let profilePicBase64;
 
   // if(req.file) {
@@ -161,15 +161,17 @@ app.post("/updateProfile", cors(), async (req, res) => {
   // }
 
   const profile_data = {
-    name: req.body.name,
-    pronouns: req.body.pronouns,
-    facultyMajor: req.body.facultyMajor,
-    residenceStatus: req.body.residenceStatus,
-    interests: req.body.interests,
-    blurb: req.body.blurb,
-    courses: req.body.courses,
-    profilePic: req.body.profilePic,,
+    name: req.body?.data?.name,
+    pronouns: req.body?.data?.pronouns,
+    facultyMajor: req.body?.data?.facultyMajor,
+    residenceStatus: req.body?.data?.residenceStatus,
+    interests: req.body?.data?.interests,
+    blurb: req.body?.data?.blurb,
+    courses: req.body?.data?.courses,
+    profilePic: req.body?.data?.profilePic,
   };
+
+  console.log(profile_data);
 
   try {
     const db = client.db("UBC");
