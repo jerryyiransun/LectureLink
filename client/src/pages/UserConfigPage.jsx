@@ -3,10 +3,25 @@ import { FileUploader } from "react-drag-drop-files";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import defaultPfp from "../../assets/default-pfp.png";
+import { Row, Col, Container, Form, Button } from "react-bootstrap";
+import { useForm } from "react-hook-form";
 
 const fileTypes = ["JPG", "PNG", "GIF"];
 
 export const UserConfigPage = () => {
+  const { register, handleSubmit } = useForm({
+    defaultValues: {
+      name: "",
+      pronouns: "",
+      faculty: "",
+      residenceStatus: "",
+      interests: "",
+      blurb: "",
+      courses: [],
+      profilePic: "",
+    },
+  });
+
   const [userData, setUserData] = useState({
     name: "",
     pronouns: "",
@@ -44,72 +59,105 @@ export const UserConfigPage = () => {
     fileReader.readAsDataURL(dropFile);
   };
 
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
   return (
-    <div class="d-flex flex-column">
-      <div class="config-page-profile"></div>
-      <div class="config-page-inputs">
-        <h2>User Profile</h2>
-        <TextField
-          id="outlined-basic"
-          label="Name"
-          variant="outlined"
-          value={userData.name}
-          onChange={handleChangeInput}
-        />
-        <TextField
-          id="outlined-basic"
-          label="Pronouns"
-          variant="outlined"
-          value={userData.pronouns}
-          onChange={handleChangeInput}
-        />
-        <TextField
-          id="outlined-basic"
-          label="Faculty/Major"
-          variant="outlined"
-          value={userData.faculty}
-          onChange={handleChangeInput}
-        />
-        <TextField
-          id="outlined-basic"
-          label="Residence Status"
-          variant="outlined"
-          value={userData.residenceStatus}
-          onChange={handleChangeInput}
-        />
-        <TextField
-          id="outlined-basic"
-          label="Interests"
-          variant="outlined"
-          value={userData.interests}
-          onChange={handleChangeInput}
-        />
-        <TextField
-          id="outlined-basic"
-          label="Blurb"
-          variant="outlined"
-          value={userData.blurb}
-          onChange={handleChangeInput}
-        />
-        <Autocomplete
-          disablePortal
-          options={list}
-          renderInput={(params) => <TextField {...params} label="Courses: " />}
-        />
-        <h3>Upload Profile Picture</h3>
-        <FileUploader types={fileTypes} handleChange={handleFileDrop} />
-        <div>
-          <h3 class="text-black">User Details:</h3>
-          <p class="text-black">Name: {userData.name}</p>
-          <p class="text-black">Gender: {userData.gender}</p>
-          <p class="text-black">Faculty: {userData.faculty}</p>
-          <p class="text-black">Courses: {userData.courses}</p>
-          <img
-            src={userData.profilePic ? userData.profilePic1 : defaultPfp}
-            alt="Profile"
-          />
-        </div>
-      </div>
-    </div>
+    <Form onSubmit={handleSubmit(onSubmit)}>
+      <Container>
+        <Row>
+          <Col>
+            <div className="config-page-profile">
+              <h3>User Details:</h3>
+              <p>Name: {userData.name}</p>
+              <p>Gender: {userData.gender}</p>
+              <p>Faculty: {userData.faculty}</p>
+              <p>Courses: {userData.courses}</p>
+              <img
+                src={userData.profilePic ? userData.profilePic1 : defaultPfp}
+                className="rounded-circle"
+                style={{ height: "100px", width: "100px" }}
+                alt="Profile"
+              />
+            </div>
+          </Col>
+          <Col>
+            <Row>
+              <Col>
+                <TextField
+                  id="outlined-basic"
+                  label="Name"
+                  variant="outlined"
+                  {...register("name")}
+                />
+              </Col>
+              <Col>
+                <TextField
+                  id="outlined-basic"
+                  label="Pronouns"
+                  variant="outlined"
+                  {...register("pronouns")}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <TextField
+                  id="outlined-basic"
+                  label="Faculty/Major"
+                  variant="outlined"
+                  {...register("faculty")}
+                />
+              </Col>
+              <Col>
+                <TextField
+                  id="outlined-basic"
+                  label="Residence Status"
+                  variant="outlined"
+                  {...register("residenceStatus")}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <TextField
+                  id="outlined-basic"
+                  label="Interests"
+                  variant="outlined"
+                  {...register("interests")}
+                />
+              </Col>
+              <Col>
+                <TextField
+                  id="outlined-basic"
+                  label="Blurb"
+                  variant="outlined"
+                  {...register("blurb")}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Autocomplete
+                disablePortal
+                options={list}
+                renderInput={(params) => (
+                  <TextField {...params} label="Courses: " />
+                )}
+              />
+            </Row>
+            <Row>
+              <h3>Upload Profile Picture</h3>
+              <FileUploader
+                types={fileTypes}
+                handleChange={handleFileDrop}
+                {...register("profilePfp")}
+              />
+            </Row>
+            <Button type="submit">Submit Form</Button>
+          </Col>
+        </Row>
+      </Container>
+    </Form>
   );
 };
