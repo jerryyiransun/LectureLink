@@ -101,7 +101,7 @@ async function updateDB(school) {
 
     const updateResult = await collection.updateMany(
       {},
-      { $set : {"enroll_std_id" : []} }
+      { $unset : {"enroll_std_id" : []} }
     );
   } catch (error) {
     console.error("Error:", error);

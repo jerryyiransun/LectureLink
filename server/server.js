@@ -61,7 +61,6 @@ app.post("/courses", async (req, res) => {
 // Not tested
 app.post("/config", upload.single('profilePic'), async (req, res) => {
   const uid = req.body.uid;
-  const courses = req.body.courses;
   let profilePicBase64;
 
   if(req.file) {
@@ -94,24 +93,8 @@ app.post("/config", upload.single('profilePic'), async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-  }
-
-  if(courses) {
-    try {
-      const db = client.db("UBC");
-      const collection = db.collection("courses");
-      
-      for(let course of courses) {
-        await collection.updateOne(
-          {code : course},
-          { $addToSet : {enroll_std_id : uid}}
-        );
-      }
-    } catch(error) {
-      console.log(error);
-    } finally {
-      await client.close();
-    }
+  } finally {
+    await client.close();
   }
   
 });
