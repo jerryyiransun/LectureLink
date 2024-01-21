@@ -32,12 +32,16 @@ export const LoginPage = () => {
         data?.email,
         data?.password
       );
-      
+
       console.log(response);
-      const dbresponse = await registerAccount({_id: response.user.uid, email: response.user.email})
+
+      const dbresponse = await registerAccount({
+        _id: response.user.uid,
+        email: response.user.email,
+      });
+
       console.log(dbresponse);
     } catch (error) {
-      
       console.log(error);
     }
   };
@@ -53,23 +57,11 @@ export const LoginPage = () => {
       );
       // console.log(`this is the response: ${response}`);
       console.log("logged in");
-      // console.log(auth.currentUser);
-      // history.replace("/user-config");
-      navigate('/user-config')
+      navigate("/user-config");
     } catch (error) {
       alert("Invalid email or password");
-      console.log(error)
+      console.log(error);
       return;
-    }
-  };
-
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      console.log("logged out");
-    } catch (err) {
-      alert("Error logging out");
-      console.log(err);
     }
   };
 
@@ -116,7 +108,7 @@ export const LoginPage = () => {
                           type="submit"
                           className="bg-slate-500 text-[20px] py-2 rounded-lg text-white hover:bg-slate-400"
                         >
-                          Login
+                          Register
                         </Button>
                       </div>
                     </Form>

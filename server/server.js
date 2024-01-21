@@ -1,7 +1,7 @@
 const axios = require("axios");
 const express = require("express");
 const cors = require("cors");
-const multer = require("multer");
+// const multer = require("multer");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
 require("dotenv").config();
@@ -10,16 +10,16 @@ const client = new MongoClient(process.env.MONGO_URL);
 
 const app = express();
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+// const storage = multer.memoryStorage();
+// const upload = multer({ storage: storage });
 
 const corsOptions = {
   //   origin: "https://leapconcis.com",
   //   optionsSuccessStatus: 200,
 };
 
-app.options("*", cors(corsOptions));
-
+// app.options("*", cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 
 app.get("/test", cors(), (req, res) => {
@@ -53,7 +53,7 @@ app.listen(8000, async () => {
  *   "email": "student@example.com"
  * }
  */
-app.post("/courses", async (req, res) => {
+app.post("/register", cors(), async (req, res) => {
   const input = req.body;
   try {
     const db = client.db("UBC");
@@ -148,16 +148,16 @@ app.post("/courses", async (req, res) => {
 //   } catch (error) {
 //     console.log(error);
 //   }
-  
+
 // });
 
 app.post("/updateProfile", cors(), async (req, res) => {
   const _id = req.body._id;
-  let profilePicBase64;
+  // let profilePicBase64;
 
-  if(req.file) {
-    profilePicBase64 = req.file.buffer.toString('base64');
-  }
+  // if(req.file) {
+  //   profilePicBase64 = req.file.buffer.toString('base64');
+  // }
 
   const profile_data = {
     name: req.body.name,
@@ -167,7 +167,7 @@ app.post("/updateProfile", cors(), async (req, res) => {
     interests: req.body.interests,
     blurb: req.body.blurb,
     courses: req.body.courses,
-    profilePic: req.body.profilePic
+    profilePic: req.body.profilePic,
   };
 
   try {
@@ -268,35 +268,32 @@ app.get("/filter", async (req, res) => {
   const db = client.db("UBC");
   const collection = db.collection("students");
   try {
-    const student_courses = req.body.courses; 
-    let students = await collection.find({}).toArray()
+    const student_courses = req.body.courses;
+    let students = await collection.find({}).toArray();
     let studentCountMap = new Map();
 
-    students.forEach(student => {
-
+    students.forEach((student) => {
       if (student._id !== req.body._id) {
         const cur_student_courses = student.courses;
 
         let count = 0;
 
-        for(let course of cur_student_courses) {
+        for (let course of cur_student_courses) {
           if (student_courses.includes(course)) {
             count += 1;
-          } 
+          }
         }
 
         studentCountMap.set(student, count);
       }
-
-    })
+    });
 
     let sortedStudents = Array.from(studentCountMap)
       .sort((a, b) => b[1] - a[1])
-      .map(item => item[0]);
-    
-    res.status(200).json(sortedStudents);
+      .map((item) => item[0]);
 
+    res.status(200).json(sortedStudents);
   } catch (err) {
     console.log(err);
   }
-})
+});

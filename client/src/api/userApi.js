@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export const updateProfile = async (data) => {
   try {
     const response = await axios.post("http://localhost:8000/updateProfile", {
@@ -9,7 +11,7 @@ export const updateProfile = async (data) => {
   }
 };
 
-export const registerAccount = async ({_id, email}) => {
+export const registerAccount = async ({ _id, email }) => {
   try {
     const response = await axios.post("http://localhost:8000/register", {
       _id: _id,
@@ -20,5 +22,3 @@ export const registerAccount = async ({_id, email}) => {
     console.log(err);
   }
 };
-
-
