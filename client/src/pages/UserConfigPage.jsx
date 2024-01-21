@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import TextField from "@mui/material/TextField";
 import defaultPfp from "../../assets/default-pfp.png";
@@ -10,6 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 import { auth } from "../../firebase/config.js";
 import axios from "axios";
 import { updateProfile } from "../api/userApi.js";
+import { useQueryClient } from "react-query";
 
 const fileTypes = ["JPG", "PNG", "GIF"];
 
@@ -33,7 +34,7 @@ export const UserConfigPage = () => {
   const fetchCourses = async () => {
     data = await axios.get("http://localhost:8000/courses");
     return data.json;
-  }
+  };
 
   useEffect(() => {
     const returnData = fetchCourses();

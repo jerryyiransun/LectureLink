@@ -70,7 +70,7 @@ app.post("/register", cors(), async (req, res) => {
       interests: "",
       blurb: "",
       courses: [],
-      like: []
+      like: [],
     });
   } catch (err) {
     console.log(err);
@@ -256,11 +256,14 @@ app.get("/profiles", async (req, res) => {
   try {
     const db = client.db("UBC");
     const collection = db.collection("students");
-    const course = req.body.data.course;
+    console.log(req.query);
+    const course = req.query.course;
 
     const students = await collection.find({}).toArray();
-    students = students.filter((student) => student.courses.includes(course));
-    res.status(200).json(students);
+    const students_take_course = students.filter((student) =>
+      student.courses?.includes(course)
+    ); //problem here
+    res.status(200).json(students_take_course);
   } catch (err) {
     console.log(err);
   }
@@ -302,28 +305,26 @@ app.get("/filter", async (req, res) => {
       .sort((a, b) => b[1] - a[1])
       .map((item) => item[0]);
 
-  
-
-  res.status(200).json(sortedStudents);
+    res.status(200).json(sortedStudents);
   } catch (err) {
     console.log(err);
   }
 });
 
-app.post("/like", async(req, res) => {
+app.post("/like", async (req, res) => {
   const db = client.db("UBC");
   const collection = db.collection("students");
-  try{
+  try {
     const liked_email = req.body.data.email;
     const cur_student = req.body.data._id;
     const cur_email = req.body.data.student_email;
 
     const updateResult = await collection.updateOne(
-      { _id : cur_student },
-      { $addToSet : {like : liked_email } }
+      { _id: cur_student },
+      { $addToSet: { like: liked_email } }
     );
 
-    const students = await collection.find({email : like_email}).toArray();
+    const students = await collection.find({ email: like_email }).toArray();
     let matchedStudents = [cur_email];
     for (let student of students) {
       if (student.like.includes(cur_email)) {
@@ -337,11 +338,11 @@ app.post("/like", async(req, res) => {
       res.status(304).send("Student already liked this email");
     } else {
       res.status(200).json({
-        message : "Match Found",
-        matchedStudents : matchedStudents
+        message: "Match Found",
+        matchedStudents: matchedStudents,
       });
-    }    
+    }
   } catch (error) {
     console.log(error);
   }
-}) 
+});

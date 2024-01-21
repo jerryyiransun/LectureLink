@@ -6,6 +6,7 @@ import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { Card } from "react-bootstrap";
+import profilePic from "../../../assets/default-pfp.png";
 
 export const InfoCard = ({
   name,
@@ -24,7 +25,7 @@ export const InfoCard = ({
       />
       <Card.Title className="d-flex flex-row justify-content-around align-items-center ">
         <img
-          src={imageUrl}
+          src={imageUrl ? imageUrl : profilePic}
           alt="profile picture"
           style={{ width: "100px", height: "100px", borderRadius: "50%" }}
         />
