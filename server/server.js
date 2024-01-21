@@ -41,7 +41,7 @@ app.listen(8000, async () => {
  * Route: POST /courses
  * 
  * Request Body:
- * - uid (String): Unique identifier for the student.
+ * - _id (String): Unique identifier for the student.
  * - email (String): Email address of the student.
  *
  * On success, adds a new student record to the database.
@@ -49,7 +49,7 @@ app.listen(8000, async () => {
  *
  * Example Request Body:
  * {
- *   "uid": "12345",
+ *   "_id": "12345",
  *   "email": "student@example.com"
  * }
  */
@@ -60,7 +60,7 @@ app.post("/courses", async (req, res) => {
     const collection = db.collection("students");
 
     await collection.insertOne({
-      uid: input.uid,
+      _id: input._id,
       email: input.email,
   
       name: "",
@@ -73,9 +73,7 @@ app.post("/courses", async (req, res) => {
     });
   } catch(err) {
     console.log(err);
-  } finally {
-    await client.close();
-  }
+  } 
 
 });
 
@@ -88,7 +86,7 @@ app.post("/courses", async (req, res) => {
  * Route: POST /config
  * 
  * Request Body:
- * - uid (String): Unique identifier for the student.
+ * - _id (String): Unique identifier for the student.
  * - email (String): Email address of the student.
  * - name (String): Name of student.
  * - pronouns (String): Pronouns of student.
@@ -104,7 +102,7 @@ app.post("/courses", async (req, res) => {
  *
  * Example Request Body:
  * {
- *   "uid" : "21234567890",
+ *   "_id" : "21234567890",
  *   "email" : "name@example.com",
  *   "name" : "John Doe",
  *   "pronouns" : "He/Him",
@@ -116,8 +114,8 @@ app.post("/courses", async (req, res) => {
  *   "profilePic" : ""
  *  } 
  */
-app.post("/config", upload.single('profilePic'), async (req, res) => {
-  const uid = req.body.uid;
+app.post("/updateProfile", upload.single('profilePic'), async (req, res) => {
+  const _id = req.body._id;
   let profilePicBase64;
 
   if(req.file) {
@@ -139,7 +137,7 @@ app.post("/config", upload.single('profilePic'), async (req, res) => {
     const db = client.db("UBC");
     const collection = db.collection("students");
     const result = await collection.updateOne(
-      { uid: uid },
+      { _id: _id },
       { $set: profile_data }
     );
 
@@ -150,8 +148,6 @@ app.post("/config", upload.single('profilePic'), async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-  } finally {
-    await client.close();
   }
   
 });
@@ -174,4 +170,35 @@ app.get("/courses", cors(), async (req, res) => {
   const courses = await collection.find({}).toArray();
 
   res.status(200).json(courses);
+});
+
+/**
+ * GET endpoint to retrieve specific students profile data.
+ *
+ * Retrives corresponding uid's profile
+ *
+ * Route: GET /getinfo
+ * 
+ * Request Body:
+ * - _id (String): Unique identifier for student.
+ * 
+ *
+ * On success, returns student's profile.
+ * On error, logs the error without interrupting the server.
+ * 
+ * Example Request Body:
+ * {
+ *   "_id" : "1234567890",
+ *  } 
+ */
+app.get("/getinfo", async(req, res) => {
+  try {
+    const db = client.db("UBC");
+    const collection = db.collection("students");
+  
+    const profile = await collection.find({_id : req.body._id}).toArray();
+    res.status(200).json(profile);
+  } catch (err) {
+    console.log(err);
+  } 
 });
