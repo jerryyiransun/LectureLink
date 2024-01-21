@@ -9,6 +9,7 @@ import { Row, Col, Form, Button, FloatingLabel } from "react-bootstrap";
 import { Controller, useForm } from "react-hook-form";
 import { auth } from "../../firebase/config.js";
 import axios from "axios";
+import { updateProfile } from "../api/userApi.js";
 
 const fileTypes = ["JPG", "PNG", "GIF"];
 
@@ -67,18 +68,16 @@ export const UserConfigPage = () => {
       blurb: data.blurb,
       courses: data.courses,
       profilePic: data.profilePic,
-    } 
+    };
     try {
       const response = await updateProfile(request_body);
-      
-      if (response.ok) {
-        console.log("Profile updated successfully");
-      } 
 
+      if (response?.ok) {
+        console.log("Profile updated successfully");
+      }
     } catch (error) {
       throw new Error(error);
     }
-
   };
 
   return (
