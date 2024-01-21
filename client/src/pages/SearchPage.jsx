@@ -3,7 +3,7 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import styles from "./SearchPage.module.css";
 import { InfoCard } from "./components/InfoCard";
-import { Popup } from "./components/Popup";
+// import { Popup } from "./components/Popup";
 
 export const SearchPage = () => {
   const [search, setSearch] = useState("");
