@@ -7,11 +7,12 @@ import styles from "./UserConfigPage.module.css";
 
 import { Row, Col, Form, Button, FloatingLabel } from "react-bootstrap";
 import { useForm } from "react-hook-form";
+import { auth } from "../../firebase/config.js";
 
 const fileTypes = ["JPG", "PNG", "GIF"];
 
 export const UserConfigPage = () => {
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, setValue } = useForm({
     defaultValues: {
       name: "",
       pronouns: "",
@@ -43,6 +44,7 @@ export const UserConfigPage = () => {
     fileReader.onload = function () {
       console.log("PFP Picture: " + fileReader.result);
       setFile(fileReader.result);
+      setValue("profilePic", fileReader.result);
     };
 
     console.log(dropFile);
@@ -51,6 +53,20 @@ export const UserConfigPage = () => {
 
   const onSubmit = (data) => {
     console.log(data);
+    console.log(auth);
+    request_body = {
+      uid: auth.currentUser.uid,
+      name: data.name,
+      email: auth.currentUser.email,
+      pronouns: data.pronouns,
+      facultyMajor: data.faculty,
+      residenceStatus: data.residenceStatus,
+      interests: data.interests,
+      blurb: data.blurb,
+      courses: data.courses,
+      file: data.profilePic,
+    } 
+    
   };
 
   return (
@@ -63,7 +79,7 @@ export const UserConfigPage = () => {
         <FileUploader
           types={fileTypes}
           handleChange={handleFileDrop}
-          {...register("profilePfp")}
+          {...register("profilePic")}
         />
         <div className={styles.gridContainer}>
           <Row className="mb-3">
