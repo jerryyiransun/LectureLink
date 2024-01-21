@@ -8,33 +8,19 @@ import { UserConfigPage } from "./pages/UserConfigPage";
 import { SearchPage } from "./pages/SearchPage.jsx";
 import { ChatPage } from "./pages/ChatPage";
 import { Link } from "react-router-dom";
+import { NavBar } from "./pages/components/NavBar.jsx";
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  /*
-  Login
-  User Setup
-  Search Page
-  - filter
-  - profile popups
-  Chat Page
-  */
   return (
     <>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/user-config" element={<UserConfigPage />} />
-        <Route path="/search" element={<SearchPage />} />
-        <Route path="/chat" element={<ChatPage />} />
-      </Routes>
-
-      <div>
-        <div>Home Page</div>
-        <div className="link-container">
-          <Link to="/user-config">Go to User Config</Link>
-          <Link to="/search">Go to Search</Link>
-        </div>
+      <NavBar />
+      <div style={{ paddingTop: "100px" }}>
+        <Routes className="">
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/user-config" element={<UserConfigPage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/chat" element={<ChatPage />} />
+        </Routes>
       </div>
     </>
   );

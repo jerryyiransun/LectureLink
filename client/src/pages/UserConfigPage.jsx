@@ -57,7 +57,7 @@ export const UserConfigPage = () => {
     <Form onSubmit={handleSubmit(onSubmit)}>
       <div className="d-flex flex-column justify-content-center align-items-center gap-4  ">
         <h1>Profile</h1>
-        <img src={file ? file : defaultPfp} />
+        <img src={file ? file : defaultPfp} className={styles.image} />
         <FileUploader
           types={fileTypes}
           handleChange={handleFileDrop}
@@ -157,8 +157,8 @@ export const UserConfigPage = () => {
           </Form.Group>
         </div>
 
-        <Button variant="primary" type="submit">
-          Submit
+        <Button variant="primary px-4 " type="submit">
+          Save
         </Button>
       </div>
     </Form>

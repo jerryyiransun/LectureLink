@@ -26,7 +26,7 @@ export const InfoCard = ({
         <img
           src={imageUrl}
           alt="profile picture"
-          style={{ width: "100px", borderRadius: "50%" }}
+          style={{ width: "100px", height: "100px", borderRadius: "50%" }}
         />
         {
           <div className="d-flex flex-column">
@@ -35,7 +35,13 @@ export const InfoCard = ({
           </div>
         }
       </Card.Title>
-      <Card.Body>
+      <Card.Body
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignContent: "center",
+        }}
+      >
         <div className={styles.courses}>
           {courses.map((course, index) => (
             <Button key={index} disabled>
