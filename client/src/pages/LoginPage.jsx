@@ -59,6 +59,7 @@ export const LoginPage = () => {
     } catch (error) {
       alert("Invalid email or password");
       console.log(error)
+      return;
     }
   };
 

@@ -11,7 +11,7 @@ const client = new MongoClient(process.env.MONGO_URL);
 const app = express();
 
 const storage = multer.memoryStorage();
-const upload = multer({storage : storage});
+const upload = multer({ storage: storage });
 
 const corsOptions = {
   //   origin: "https://leapconcis.com",
@@ -34,12 +34,12 @@ app.listen(8000, async () => {
 /**
  * POST endpoint to create a new student record.
  *
- * Accepts JSON data with a student's UID and email, then creates a new document 
- * in the 'students' collection of the 'UBC' database. Additional student fields 
+ * Accepts JSON data with a student's UID and email, then creates a new document
+ * in the 'students' collection of the 'UBC' database. Additional student fields
  * are initialized with default values.
  *
  * Route: POST /courses
- * 
+ *
  * Request Body:
  * - _id (String): Unique identifier for the student.
  * - email (String): Email address of the student.
@@ -62,7 +62,7 @@ app.post("/courses", async (req, res) => {
     await collection.insertOne({
       _id: input._id,
       email: input.email,
-  
+
       name: "",
       pronouns: "",
       facultyMajor: "",
@@ -71,20 +71,19 @@ app.post("/courses", async (req, res) => {
       blurb: "",
       courses: [],
     });
-  } catch(err) {
+  } catch (err) {
     console.log(err);
-  } 
-
+  }
 });
 
 /**
  * POST endpoint to update student record.
  *
  * Accepts JSON data with a student's UID, email, profile picture etc.
- * Then creates a new document in the 'students' collection of the 'UBC' database. 
+ * Then creates a new document in the 'students' collection of the 'UBC' database.
  *
- * Route: POST /config
- * 
+ * Route: POST /updateProfile
+ *
  * Request Body:
  * - _id (String): Unique identifier for the student.
  * - email (String): Email address of the student.
@@ -96,7 +95,7 @@ app.post("/courses", async (req, res) => {
  * - blurb (String): Intriduction of student.
  * - courses (Array): Courses the student takes.
  * - profilePic (String): 64base String of students profile picture;
- * 
+ *
  * On success, updates the corresponding student's information on database.
  * On error, logs the error without interrupting the server.
  *
@@ -112,9 +111,9 @@ app.post("/courses", async (req, res) => {
  *   "blurb" : "Hi, I'm John Doe",
  *   "courses" : ["AMNE 356", "AMNE 261", "ANTH 461"],
  *   "profilePic" : ""
- *  } 
+ *  }
  */
-// app.post("/updateProfile", upload.single('profilePic'), async (req, res) => {
+// app.post("/updateProfile", upload.single("profilePic"), async (req, res) => {
 //   const _id = req.body._id;
 //   let profilePicBase64;
 
@@ -156,6 +155,10 @@ app.post("/updateProfile", cors(), async (req, res) => {
   const _id = req.body._id;
   let profilePicBase64;
 
+  if(req.file) {
+    profilePicBase64 = req.file.buffer.toString('base64');
+  }
+
   const profile_data = {
     name: req.body.name,
     pronouns: req.body.pronouns,
@@ -183,7 +186,6 @@ app.post("/updateProfile", cors(), async (req, res) => {
   } catch (error) {
     console.log(error);
   }
-  
 });
 
 /**
@@ -192,7 +194,7 @@ app.post("/updateProfile", cors(), async (req, res) => {
  * Retrives all courses in the Course Database.
  *
  * Route: GET /courses
- * 
+ *
  *
  * On success, returns all courses in Database.
  * On error, logs the error without interrupting the server.
@@ -212,27 +214,89 @@ app.get("/courses", cors(), async (req, res) => {
  * Retrives corresponding uid's profile
  *
  * Route: GET /getinfo
- * 
+ *
  * Request Body:
  * - _id (String): Unique identifier for student.
- * 
+ *
  *
  * On success, returns student's profile.
  * On error, logs the error without interrupting the server.
- * 
+ *
  * Example Request Body:
  * {
  *   "_id" : "1234567890",
- *  } 
+ *  }
  */
-app.get("/getinfo", async(req, res) => {
+app.get("/getinfo", async (req, res) => {
   try {
     const db = client.db("UBC");
     const collection = db.collection("students");
-  
-    const profile = await collection.find({_id : req.body._id}).toArray();
+
+    const profile = await collection.find({ _id: req.body._id }).toArray();
     res.status(200).json(profile);
   } catch (err) {
     console.log(err);
-  } 
+  }
 });
+
+/**
+ * GET endpoint to retrieve all students that have taken a specific course.
+ *
+ * Retrives all students that have taken a specific course.
+ *
+ * Route: GET /course/:course
+ *
+ * Request Body:
+ * - _id (String): Unique identifier for student.
+ */
+app.get("/course", async (req, res) => {
+  try {
+    const db = client.db("UBC");
+    const collection = db.collection("students");
+    const course = req.body.course;
+
+    let students = await collection.find({}).toArray();
+    students = students.filter((student) => student.courses.includes(course));
+    res.status(200).json(students);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+// need documentations
+app.get("/filter", async (req, res) => {
+  const db = client.db("UBC");
+  const collection = db.collection("students");
+  try {
+    const student_courses = req.body.courses; 
+    let students = await collection.find({}).toArray()
+    let studentCountMap = new Map();
+
+    students.forEach(student => {
+
+      if (student._id !== req.body._id) {
+        const cur_student_courses = student.courses;
+
+        let count = 0;
+
+        for(let course of cur_student_courses) {
+          if (student_courses.includes(course)) {
+            count += 1;
+          } 
+        }
+
+        studentCountMap.set(student, count);
+      }
+
+    })
+
+    let sortedStudents = Array.from(studentCountMap)
+      .sort((a, b) => b[1] - a[1])
+      .map(item => item[0]);
+    
+    res.status(200).json(sortedStudents);
+
+  } catch (err) {
+    console.log(err);
+  }
+})
