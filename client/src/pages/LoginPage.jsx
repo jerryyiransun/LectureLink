@@ -8,6 +8,7 @@ import {
 import { useState } from "react";
 import styles from "./LoginPage.module.css";
 import { auth } from "../../firebase/config.js";
+import { useNavigate } from "react-router-dom";
 
 export const LoginPage = () => {
   const { register, handleSubmit, reset } = useForm({
@@ -16,6 +17,9 @@ export const LoginPage = () => {
       password: "",
     },
   });
+
+  // const history = useHistory();
+  const navigate = useNavigate();
 
   console.log(auth?.currentUser?.email);
   console.log(auth.currentUser);
@@ -42,10 +46,12 @@ export const LoginPage = () => {
         data?.email,
         data?.password
       );
-      console.log(response);
+      console.log(`this is the response: ${response}`);
     } catch (error) {
       console.log(error);
     }
+    navigate('/user-config')
+  
   };
 
   const handleSignOut = async () => {
