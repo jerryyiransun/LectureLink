@@ -3,9 +3,18 @@ import { Button, Container, Nav, Navbar } from "react-bootstrap";
 import { auth } from "../../../firebase/config.js";
 import { handleSignOut } from "../../api/firebasApi.js";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
 
 export const NavBar = () => {
-  console.log(auth?.currentUser);
+  const [user, setUser] = useState(auth.currentUser);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setUser(user);
+    });
+  }, [auth]);
+
   return (
     <Navbar
       bg="dark"
