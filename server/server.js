@@ -53,7 +53,7 @@ app.listen(8000, async () => {
  *   "email": "student@example.com"
  * }
  */
-app.post("/courses", async (req, res) => {
+app.post("/register", async (req, res) => {
   const input = req.body;
   try {
     const db = client.db("UBC");
@@ -69,7 +69,7 @@ app.post("/courses", async (req, res) => {
       residenceStatus: "",
       interests: "",
       blurb: "",
-      courses: [],
+      courses: []
     });
   } catch (err) {
     console.log(err);
@@ -240,12 +240,21 @@ app.get("/filter", async (req, res) => {
         const cur_student_courses = student.courses;
 
         let count = 0;
+        let same_courses = [];
+        let diff_courses = [];
 
         for(let course of cur_student_courses) {
           if (student_courses.includes(course)) {
             count += 1;
+            same_courses.push(course);
           } 
+
+          else {
+            diff_courses.push(course);
+          }
         }
+        student.same_courses = same_courses;
+        student.diff_courses = diff_courses;
 
         studentCountMap.set(student, count);
       }
@@ -254,8 +263,9 @@ app.get("/filter", async (req, res) => {
 
     let sortedStudents = Array.from(studentCountMap)
       .sort((a, b) => b[1] - a[1])
-      .map(item => item[0]);
+      .map(item => item[0]); 
     
+  
     res.status(200).json(sortedStudents);
 
   } catch (err) {
