@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
-import TextField from "@mui/material/TextField";
 import defaultPfp from "../../assets/default-pfp.png";
 import Select from "react-select";
 import styles from "./UserConfigPage.module.css";
@@ -8,9 +7,8 @@ import styles from "./UserConfigPage.module.css";
 import { Row, Col, Form, Button, FloatingLabel } from "react-bootstrap";
 import { Controller, useForm } from "react-hook-form";
 import { auth } from "../../firebase/config.js";
-import axios from "axios";
-import { updateProfile } from "../api/userApi.js";
-import { useQueryClient } from "react-query";
+import { fetchCourses, updateProfile } from "../api/userApi.js";
+import { useQuery } from "react-query";
 
 const fileTypes = ["JPG", "PNG", "GIF"];
 
@@ -29,17 +27,18 @@ export const UserConfigPage = () => {
   });
 
   const [file, setFile] = useState(null);
-  const [list, setList] = useState([]);
 
-  const fetchCourses = async () => {
-    data = await axios.get("http://localhost:8000/courses");
-    return data.json;
-  };
+  const { data: courses, isLoading: isCoursesLoading } = useQuery(
+    "courses",
+    fetchCourses
+  );
 
-  useEffect(() => {
-    const returnData = fetchCourses();
-    setList(returnData);
-  }, []);
+  const cleanedData = courses?.map((item) => {
+    return {
+      label: item.code,
+      value: item.code,
+    };
+  });
 
   const handleFileDrop = (dropFile) => {
     const fileReader = new FileReader();
@@ -172,12 +171,13 @@ export const UserConfigPage = () => {
                 <Select
                   onChange={onChange}
                   onBlur={onBlur}
+                  isLoading={isCoursesLoading}
                   value={value}
                   name={name}
                   ref={ref}
                   closeMenuOnSelect={false}
                   isMulti
-                  options={list}
+                  options={cleanedData}
                   className="mb-3"
                   placeholder="Select Courses..."
                 />

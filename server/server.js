@@ -159,6 +159,7 @@ app.post("/updateProfile", cors(), async (req, res) => {
   // if(req.file) {
   //   profilePicBase64 = req.file.buffer.toString('base64');
   // }
+  const course_list = req.body.data.courses?.map((course) => course.label);
 
   const profile_data = {
     name: req.body?.data?.name,
@@ -167,7 +168,7 @@ app.post("/updateProfile", cors(), async (req, res) => {
     residenceStatus: req.body?.data?.residenceStatus,
     interests: req.body?.data?.interests,
     blurb: req.body?.data?.blurb,
-    courses: req.body?.data?.courses,
+    courses: course_list,
     profilePic: req.body?.data?.profilePic,
   };
 
@@ -256,13 +257,14 @@ app.get("/profiles", cors(), async (req, res) => {
   try {
     const db = client.db("UBC");
     const collection = db.collection("students");
-    console.log(req.query);
     const course = req.query.course;
 
     const students = await collection.find({}).toArray();
+    console.log(students);
     const students_take_course = students.filter((student) =>
       student.courses?.includes(course)
-    ); //problem here
+    );
+
     res.status(200).json(students_take_course);
   } catch (err) {
     console.log(err);
@@ -315,23 +317,24 @@ app.post("/like", cors(), async (req, res) => {
   const db = client.db("UBC");
   const collection = db.collection("students");
   try {
-    const liked_email = req.body.data.email;
-    const cur_student = req.body.data._id;
-    const cur_email = req.body.data.student_email;
+    const cur_email = req.body.cur_email;
+    const cur_student = req.body._id;
+    const liked_email = req.body.liked_email;
 
     const updateResult = await collection.updateOne(
       { _id: cur_student },
       { $addToSet: { like: liked_email } }
     );
+    const curr_student = await collection.find({ email: cur_email });
+    const curr_student_name = curr_student.name;
 
-    const students = await collection.find({ email: like_email }).toArray();
-    let matched_pairs = [];
-    for (let student of students) {
-      let matchedStudents = [cur_email];
-      if (student.like.includes(cur_email)) {
-        matchedStudents.push(student.email);
-      }
-      matched_pairs.push(matchedStudents);
+    const liked_student = await collection.find({ email: liked_email });
+    const liked_student_name = liked_student.name;
+
+    matched_pair = [];
+    if (liked_student.like?.includes(cur_email)) {
+      matched_pair.push({ curr_student_name: cur_email });
+      matched_pair.push({ liked_student_name: liked_email });
     }
 
     if (updateResult.matchedCount === 0) {
@@ -339,9 +342,9 @@ app.post("/like", cors(), async (req, res) => {
     } else if (updateResult.modifiedCount === 0) {
       res.status(304).send("Student already liked this email");
     } else {
+      console.log(matched_pairs);
       res.status(200).json({
-        message: "Match Found",
-        matched_pairs: matched_pairs,
+        matched_pair: matched_pair,
       });
     }
   } catch (error) {

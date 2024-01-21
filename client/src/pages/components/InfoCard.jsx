@@ -1,6 +1,4 @@
-import React from "react";
 import styles from "./InfoCard.module.css";
-import { BlurbModal } from "./BlurbModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { GrLike } from "react-icons/gr";
@@ -9,7 +7,6 @@ import Modal from "react-bootstrap/Modal";
 import { Card } from "react-bootstrap";
 import { auth } from "../../../firebase/config.js";
 import profilePic from "../../../assets/default-pfp.png";
-import axios from "axios";
 import { addLike } from "../../api/userApi.js";
 
 export const InfoCard = ({
@@ -21,25 +18,34 @@ export const InfoCard = ({
   openPopup,
   likedEmail,
 }) => {
-
   const likeProfile = async () => {
-    const response = await addLike({cur_email: auth?.currentUser?.email, liked_email: likedEmail, _id: auth.currentUser.uid});
+    const response = await addLike({
+      cur_email: auth?.currentUser?.email,
+      liked_email: likedEmail,
+      _id: auth.currentUser?.uid,
+    });
     const data = JSON.parse(response);
     console.log(data);
-  }
+  };
 
   return (
     <Card className={styles.card}>
-      <div class="d-flex">
-        <FontAwesomeIcon
-          icon={faArrowUp}
-          className={styles.icon}
-          onClick={openPopup}
-        />
-        <GrLike
-          className={styles.icon}
-          onClick={() => {likeProfile()}}
-        />
+      <div className="d-flex justify-content-between ">
+        <Button variant="">
+          <FontAwesomeIcon
+            icon={faArrowUp}
+            className={styles.icon}
+            onClick={openPopup}
+          />
+        </Button>
+        <Button
+          variant=""
+          onClick={() => {
+            likeProfile();
+          }}
+        >
+          <GrLike className={styles.icon} />
+        </Button>
       </div>
       <Card.Title className="d-flex flex-row justify-content-around align-items-center ">
         <img
