@@ -1,6 +1,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 
+.card {
+  width: 45%;
+}
+
+@media (max-width: 768px) {
+  .card {
+    width: 90%;
+  }
+}
+
 .cardContainer {
   color: black; /* Make the text color black */
   font-family: "Roboto", sans-serif; /* Use the custom font */
@@ -35,6 +45,7 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
   gap: 5px;
 }
 
